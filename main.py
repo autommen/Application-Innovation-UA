@@ -15,7 +15,11 @@ def get_dataframe(filepath: str) -> DataFrame:
     if not os.path.exists(filepath + '.csv'):
         dataframe = pandas.read_xml(filepath + '.xml')
 
+        dataframe['commentaire'].fillna(" ", inplace=True)
+        dataframe['commentaire'].apply(lambda comment: comment.lower())
+
         if 'note' in dataframe.columns:
+            dataframe['note'].fillna("0,5", inplace=True)
             dataframe['note'].apply(lambda note: float(note.replace(',', '.')))
 
         # Sauvegarder le DataFrame modifié dans un nouveau fichier CSV
@@ -25,21 +29,18 @@ def get_dataframe(filepath: str) -> DataFrame:
     return dataframe
 
 def prepare_data(document: DataFrame, tfidf_vectorizer = None, label_encoder = None):
-    text_data = document['commentaire'].fillna(" ")
+    text_data = document['commentaire']
 
     if tfidf_vectorizer is None:
-        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000)
+        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000, strip_accents='unicode')
         x_tfidf = tfidf_vectorizer.fit_transform(text_data.values)
     else:
         x_tfidf = tfidf_vectorizer.transform(text_data.values)
 
-    # other_features = document.drop(['note', 'commentaire'], axis=1)
-    # x_combined = pandas.concat([other_features, pandas.DataFrame(x_tfidf.toarray())], axis=1)
-    # x = x_combined.columns.astype(str)
 
     x = pandas.DataFrame(x_tfidf.toarray())
     if label_encoder is None:
-        y = document['note'].fillna("0,5")
+        y = document['note']
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(y)
         return ((x,y),(tfidf_vectorizer, label_encoder))
@@ -56,9 +57,8 @@ if __name__ == '__main__':
     print(x,y)
 
     if len(x) == len(y):
-        x_train, x_validation, y_train, y_validation = sklearn.model_selection.train_test_split(x, y, test_size=0.25, random_state=42)
         svc = svm.LinearSVC(verbose=True)
-        svc.fit(x_train, y_train)
+        svc.fit(x, y)
 
         document_test = get_dataframe('data/test')
 
