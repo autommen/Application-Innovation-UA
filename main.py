@@ -28,6 +28,7 @@ def get_dataframe(filepath: str) -> DataFrame:
         dataframe = pandas.read_csv(filepath + '.csv')
     return dataframe
 
+
 def prepare_data(document: DataFrame, tfidf_vectorizer = None, label_encoder = None):
     text_data = document['commentaire']
 
