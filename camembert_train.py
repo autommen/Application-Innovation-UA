@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+# Source : https://github.com/huggingface/transformers/blob/main/examples/tensorflow/text-classification/run_text_classification.py
+# Modifié pour les besoins du développement.
+
 # coding=utf-8
 # Copyright 2021 The HuggingFace Inc. team. All rights reserved.
 #
