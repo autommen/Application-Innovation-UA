@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 
-#pour elasticsearch
+
+# pour elasticsearch
 
 def processing(document):
     dictUser = {}
@@ -22,8 +23,8 @@ def processing(document):
 
     return document
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     if not os.path.exists('data/dev.csv'):
         document = pd.read_xml('data/dev.xml')
 
@@ -39,6 +40,3 @@ if __name__ == '__main__':
         document = processing(document)
 
         document.to_csv('data/train.csv', index=False)
-
-
-

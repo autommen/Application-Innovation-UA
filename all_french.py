@@ -1,19 +1,13 @@
 import pandas
 import os
 
-import sklearn
 from sklearn import svm
-from sklearn.metrics import classification_report
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
 
 import langid
-import pandas as pd
-
-
 
 
 def get_dataframe(filepath: str) -> DataFrame:
@@ -34,59 +28,51 @@ def get_dataframe(filepath: str) -> DataFrame:
     return dataframe
 
 
-def prepare_data(document: DataFrame, tfidf_vectorizer = None, label_encoder = None):
+def prepare_data(document: DataFrame, tfidf_vectorizer=None, label_encoder=None):
     text_data = document['commentaire']
 
     if tfidf_vectorizer is None:
-        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000, strip_accents='unicode')
+        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000,
+                                           strip_accents='unicode')
         x_tfidf = tfidf_vectorizer.fit_transform(text_data.values)
     else:
         x_tfidf = tfidf_vectorizer.transform(text_data.values)
-
 
     x = pandas.DataFrame(x_tfidf.toarray())
     if label_encoder is None:
         y = document['note']
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(y)
-        return ((x,y),(tfidf_vectorizer, label_encoder))
+        return ((x, y), (tfidf_vectorizer, label_encoder))
     else:
         return x
-    
-    
+
+
 def detect_language(comment):
     lang, _ = langid.classify(comment)
     return lang
-    
 
 
 if __name__ == '__main__':
     path = 'data/train'
     document = get_dataframe(path)
-    
 
     # Filtrer les commentaires qui sont reconnus comme français
     all_french = document[document['commentaire'].apply(lambda x: detect_language(x) == 'fr')]
 
     # Afficher le DataFrame résultant
     print(all_french)
-                
-
 
     (x, y), (tfidf_vectorizer, label_encoder) = prepare_data(all_french)
-    
 
-
-    print(x,y)
+    print(x, y)
 
     if len(x) == len(y):
         svc = svm.LinearSVC(verbose=True)
-        
+
         svc.fit(x, y)
 
         document_test = get_dataframe('data/test')
-        
-        
 
         x_test = prepare_data(document_test, tfidf_vectorizer, label_encoder)
 
@@ -97,5 +83,4 @@ if __name__ == '__main__':
 
         render.to_csv("data/render.txt", sep=" ", header=False, index=False)
     else:
-        print("Error: Inconsistent number of samples between x ("+str(len(x))+") and y ("+str(len(y))+").")
-
+        print("Error: Inconsistent number of samples between x (" + str(len(x)) + ") and y (" + str(len(y)) + ").")

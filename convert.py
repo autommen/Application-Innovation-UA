@@ -1,6 +1,4 @@
 import pandas
-import tensorflow as tf
-from keras.models import load_model
 
 
 def convert_dataset():
@@ -21,6 +19,7 @@ def convert_dataset():
     dataframe.rename(columns={"commentaire": "sentence1"}, inplace=True)
     # Sauvegarder le DataFrame modifié dans un nouveau fichier CSV
     dataframe.to_csv(filepath + '.csv', index=False)
+
 
 if __name__ == '__main__':
     convert_dataset()

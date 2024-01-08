@@ -4,8 +4,8 @@ import pandas
 import os
 import numpy as np
 import tensorflow as tf
-from keras.layers import Conv1D, Conv2D, Dropout, MaxPooling1D, Flatten, Dense, GlobalMaxPooling1D, Embedding
-from keras import datasets, layers, models, Sequential, Input
+from keras.layers import Conv1D, MaxPooling1D, Flatten, Dense, Embedding
+from keras import models, Input
 
 from pandas import DataFrame
 import string
@@ -16,16 +16,16 @@ from keras.src.saving import load_model
 
 tf.config.set_visible_devices([], 'GPU')
 
-vocabulary_size = 2500
+vocabulary_size = 3000
 compteur = [0]
 EMBEDDING_DIM = 100
 max_length = 20
 
-path = './mots_choisis.txt'
-path_tsv = './vectors.tsv'
+path = 'data/mots_choisis.txt'
+path_tsv = './models/cnn/vectors.tsv'
 path_train = './data/train'
 
-mots_choisis = './mots_choisis.txt'
+mots_choisis = './models/cnn/mots_choisis.txt'
 
 
 def get_dataframe(filepath: str) -> DataFrame:

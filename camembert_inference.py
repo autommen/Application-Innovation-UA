@@ -1,13 +1,14 @@
 import sys
 
+from keras.src.optimizers import Adam
 from tqdm.auto import tqdm
-from datasets import Dataset
 import tensorflow as tf
 from keras.src.callbacks import ModelCheckpoint
 from pandas import DataFrame
 from transformers import TextClassificationPipeline, DataCollatorWithPadding
 from transformers import TFCamembertForSequenceClassification, CamembertTokenizer
 from transformers.pipelines.base import KeyDataset
+from datasets import Dataset
 
 from main import get_dataframe
 
@@ -35,7 +36,7 @@ def test(document_dataframe: DataFrame, tokenizer: CamembertTokenizer):
     num_epochs = 3
     batches_per_epoch = len(document_dataframe)
     total_train_steps = int(batches_per_epoch * num_epochs)
-    optimizer = tf.keras.optimizers.legacy.Adam(
+    optimizer = Adam(
         learning_rate=2e-5
     )
 
@@ -69,7 +70,7 @@ def train(document_dataframe: DataFrame, tokenizer: CamembertTokenizer):
     num_epochs = 3
     batches_per_epoch = len(tokenized_document['train'])
     total_train_steps = int(batches_per_epoch * num_epochs)
-    optimizer = tf.keras.optimizers.legacy.Adam(
+    optimizer = Adam(
         learning_rate=2e-5
     )
 
@@ -112,7 +113,7 @@ if __name__ == '__main__':
         path = 'data/test'
     else:
         print("Training model...")
-        path = 'data/dev'
+        path = 'data/train'
 
     document = get_dataframe(path)
     document = prepare_dataset(document)

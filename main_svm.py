@@ -29,22 +29,22 @@ def get_dataframe(filepath: str) -> DataFrame:
     return dataframe
 
 
-def prepare_data(document: DataFrame, tfidf_vectorizer = None, label_encoder = None):
+def prepare_data(document: DataFrame, tfidf_vectorizer=None, label_encoder=None):
     text_data = document['commentaire']
 
     if tfidf_vectorizer is None:
-        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000, strip_accents='unicode')
+        tfidf_vectorizer = TfidfVectorizer(stop_words=stopwords.words('french'), max_features=3000,
+                                           strip_accents='unicode')
         x_tfidf = tfidf_vectorizer.fit_transform(text_data.values)
     else:
         x_tfidf = tfidf_vectorizer.transform(text_data.values)
-
 
     x = pandas.DataFrame(x_tfidf.toarray())
     if label_encoder is None:
         y = document['note']
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(y)
-        return ((x,y),(tfidf_vectorizer, label_encoder))
+        return ((x, y), (tfidf_vectorizer, label_encoder))
     else:
         return x
 
@@ -54,15 +54,15 @@ if __name__ == '__main__':
     document = get_dataframe(path)
 
     (x, y), (tfidf_vectorizer, label_encoder) = prepare_data(document)
-    
+
     feature_names = tfidf_vectorizer.get_feature_names_out()
-    
+
     # Sauvegarde des mots dans un fichier texte
-    with open('mots_choisis.txt', 'w', encoding='utf-8') as fichier:
+    with open('data/mots_choisis.txt', 'w', encoding='utf-8') as fichier:
         for mot in feature_names:
             fichier.write(f"{mot}\n")
 
-    print(x,y)
+    print(x, y)
 
     if len(x) == len(y):
         svc = svm.LinearSVC(verbose=True)
@@ -79,4 +79,4 @@ if __name__ == '__main__':
 
         render.to_csv("data/render.txt", sep=" ", header=False, index=False)
     else:
-        print("Error: Inconsistent number of samples between x ("+str(len(x))+") and y ("+str(len(y))+").")
+        print("Error: Inconsistent number of samples between x (" + str(len(x)) + ") and y (" + str(len(y)) + ").")
