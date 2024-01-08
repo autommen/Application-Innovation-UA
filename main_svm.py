@@ -58,7 +58,7 @@ if __name__ == '__main__':
     feature_names = tfidf_vectorizer.get_feature_names_out()
 
     # Sauvegarde des mots dans un fichier texte
-    with open('data/mots_choisis.txt', 'w', encoding='utf-8') as fichier:
+    with open('models/mots_choisis.txt', 'w', encoding='utf-8') as fichier:
         for mot in feature_names:
             fichier.write(f"{mot}\n")
 

@@ -21,7 +21,7 @@ compteur = [0]
 EMBEDDING_DIM = 100
 max_length = 20
 
-path = 'data/mots_choisis.txt'
+path = 'models/mots_choisis.txt'
 path_tsv = './models/cnn/vectors.tsv'
 path_train = './data/train'
 
